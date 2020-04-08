@@ -5,6 +5,7 @@ namespace hillClimber
     using Mars.Components.Environments;
     using Mars.Common.Logging;
     using System.Collections.Generic;
+    using CognitiveABM.Perceptron;
 
     // Pragma and ReSharper disable all warnings for generated code
 #pragma warning disable 162
@@ -78,6 +79,17 @@ namespace hillClimber
             set
             {
                 if (animalReproduce != value) animalReproduce = value;
+            }
+        }
+
+        private List<double> genome = new List<double>();
+
+        public List<double> Genome
+        {
+            get => genome;
+            set
+            {
+                if (genome != value) genome = value;
             }
         }
 
@@ -225,7 +237,31 @@ namespace hillClimber
 
             Spawn(Animal_reproduce);
 
-            RandomMove();
+            /*
+             *   Start of own (non-generated) code
+             */
+            //RandomMove();
+            PerceptronFactory perceptron = new PerceptronFactory(9,9,1,9);
+            double[] outputs = perceptron.CalculatePerceptron(Genome.ToArray(), getTerrainElevations());
+            List<int[]> locations = getTerrainLocations();
+            int[] newLocation = new int[2];
+            double highestOutput = outputs[0];
+            for(int i = 1; i < 9; i++)
+            {
+                if(outputs[i] > highestOutput)
+                {
+                    highestOutput = outputs[1];
+                }
+            }
+
+            newLocation = locations[Array.IndexOf(outputs, highestOutput)];
+
+            Animal currentAgent = this;
+            Func<double[], bool> predicate = null;
+            Terrain._AnimalEnvironment.MoveTo(currentAgent, newLocation[0], newLocation[1], 1, predicate);
+            /*
+             *  End of own code
+             */
 
             Animal_elevation = terrain.GetIntegerValue(this.Position.X, this.Position.Y);
 
@@ -257,6 +293,42 @@ namespace hillClimber
                     Terrain.KillAnimal(currentAnimal, currentAnimal.executionFrequency);
                 }
             }
+        }
+
+        /* Own Metods */
+        public double[] getTerrainElevations()
+        {
+            List<double> elevations = new List<double>();
+            int x = (int)Position.X;
+            int y = (int)Position.Y;
+
+            for (int dx = -1; dx <= 1; ++dx)
+            {
+                for (int dy = -1; dy <= 1; ++dy)
+                {
+                    elevations.Add(Terrain.GetRealValue(dx + x, dy + y));
+                }
+            }
+
+            return elevations.ToArray();
+        }
+
+        public List<int[]> getTerrainLocations()
+        {
+            List<int[]> locations = new List<int[]>();
+            int x = (int)Position.X;
+            int y = (int)Position.Y;
+
+            for (int dx = -1; dx <= 1; ++dx)
+            {
+                for (int dy = -1; dy <= 1; ++dy)
+                {
+                    int[] location = new int[] { dx + x, dy + y };
+                    locations.Add(location);
+                }
+            }
+
+            return locations;
         }
 
         public System.Guid ID { get; }
