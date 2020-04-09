@@ -12,3 +12,4 @@ bld/
 [Oo]bj/
 [Oo]ut/
 /.vs/CognitiveABM/v16/Server/sqlite3/db.lock
+.vs/

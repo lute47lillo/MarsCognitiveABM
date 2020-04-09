@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\CognitiveABM",
+    "\\Examples\\HillClimberABMExample"
   ],
-  "SelectedNode": "\\CognitiveABM.sln",
+  "SelectedNode": "\\CognitiveABM\\Perceptron.cs",
   "PreviewInSolutionExplorer": false
 }

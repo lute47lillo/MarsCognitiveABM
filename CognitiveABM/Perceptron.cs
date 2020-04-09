@@ -56,27 +56,30 @@ namespace CognitiveABM.Perceptron
             }
             Console.WriteLine();
 
+            // should only run twice
             for (int layerNumber = 0; layerNumber < _totalLayers - 1; layerNumber++)
             {
 
                 // get how many nuerons are in the current layer
-                int currentLayerHeight = CalculateLayerHeight(layerNumber);
+                int currentLayerHeight = CalculateLayerHeight(layerNumber); // should always be 9
 
                 // get the needed weight matrix width and height
 
                 // matrix width = 3 * NumberOfInputs based on the fact that we have forwards, self, and backwards leading edges
-                int weightMatrixWidth = NumberOfInputs * 3 - (previousLayerHeight - currentLayerHeight);
-                int weightMatrixHeight = currentLayerHeight;
+                int weightMatrixWidth = NumberOfInputs * 3 - (previousLayerHeight - currentLayerHeight); // should be 27
+                int weightMatrixHeight = currentLayerHeight; // should be 9
+
+                // should need 243 weights (genomes) per matrix (per layer)
 
                 // get a matrix of weights
                 double[,] weights = CreateWeightMatrix(weightMatrixWidth, weightMatrixHeight);
 
                 // calculate the values of the neurons of the current layer
-                values = MatrixMultiply(values, weights);
+                values = MatrixMultiply(values, weights); // this
 
                 for (int i = 0; i < values.Length; i++)
                 {
-                    Console.Write(values[i] + " ");
+                    Console.Write("{0:N2} ", values[i]);
                 }
                 Console.WriteLine();
 
@@ -105,6 +108,8 @@ namespace CognitiveABM.Perceptron
 
         private double[,] CreateWeightMatrix(int width, int height)
         {
+
+            // width = 27, height = 9
             double[,] weights = new double[height, width];
 
             for (int i = 0; i < weights.GetLength(0); i++)
@@ -115,6 +120,16 @@ namespace CognitiveABM.Perceptron
                     _weightIndex++;
                 }
             }
+
+            Console.WriteLine("Weight Matrix");
+            for (int i = 0; i < height; ++i)
+            {
+                for (int j = 0; j < width; ++j)
+                {
+                    Console.Write("{0:N2} ", weights[i, j]);
+                }
+                Console.WriteLine();
+            }
             return weights;
         }
 
@@ -123,20 +138,24 @@ namespace CognitiveABM.Perceptron
         private double[] MatrixMultiply(double[] inputs, double[,] weights)
         {
             // the resulting array will be the same length as the number of weight columns in the weight matrix
-            double[] result = new double[weights.GetLength(1)];
 
-            Parallel.For(0, weights.GetLength(1) - 1, weightRow =>
+            // ouput vector length
+            int outputLength = weights.GetLength(0); // should be 9
+            double[] result = new double[outputLength];
+
+            Parallel.For(0, weights.GetLength(0) - 1, weightRow =>
             {
                 double sum = 0;
 
                 // iterate over the input values and the weights at the same time
-                for (int i = 0; i < weights.GetLength(0); i++)
+                for (int i = 0; i < weights.GetLength(1); i++)
                 {
-                    sum += weights[i, weightRow] * inputs[i];
+                    sum += weights[weightRow, i] * inputs[weightRow];
                 }
                 result[weightRow] = sum;
             });
 
+            Console.WriteLine("Matrix Muliplication Result");
             return result;
         }
     }
