@@ -152,15 +152,22 @@ namespace HillClimberExample
             return new Tuple<int, int>(random.Next(Terrain.DimensionX()), random.Next(Terrain.DimensionY()));
         }
 
-        private double[] GetAdjacentTerrainElevations()
+        private double[] GetAdjacentTerrainElevations(int sightRange)
         {
+            int agentSight = sightRange;
+            if(agentSight <= 0)
+            {
+                Console.WriteLine("Agent sight range must be grater than 0. Using default value of 1");
+                agentSight = 1;
+            }
+
             List<double> elevations = new List<double>();
             int x = (int)Position.X;
             int y = (int)Position.Y;
 
-            for (int dx = -1; dx <= 1; ++dx)
+            for (int dx = (agentSight*-1); dx <= agentSight; ++dx)
             {
-                for (int dy = -1; dy <= 1; ++dy)
+                for (int dy = (agentSight * -1); dy <= agentSight; ++dy)
                 {
                     elevations.Add(Terrain.GetRealValue(dx + x, dy + y));
                 }
@@ -169,15 +176,21 @@ namespace HillClimberExample
             return elevations.ToArray();
         }
 
-        private List<int[]> GetAdjacentTerrainPositions()
+        private List<int[]> GetAdjacentTerrainPositions(int sightRange)
         {
+            int agentSight = sightRange;
+            if (agentSight <= 0)
+            {
+                Console.WriteLine("Agent sight range must be grater than 0. Using default value of 1");
+                agentSight = 1;
+            }
             List<int[]> locations = new List<int[]>();
             int x = (int)Position.X;
             int y = (int)Position.Y;
 
-            for (int dx = -1; dx <= 1; ++dx)
+            for (int dx = (agentSight * -1); dx <= agentSight; ++dx)
             {
-                for (int dy = -1; dy <= 1; ++dy)
+                for (int dy = (agentSight * -1); dy <= agentSight; ++dy)
                 {
                     int[] location = new int[] { dx + x, dy + y };
                     locations.Add(location);

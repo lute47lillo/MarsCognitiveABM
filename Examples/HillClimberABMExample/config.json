@@ -18,8 +18,9 @@
   "agents": [
     {
       "name": "Animal",
-        "count": 96,
-        "file": "animal_init.csv"
+      "count": 96,
+      "file": "animal_init.csv",
+      "sightRange":  1
     }
   ]
 }
